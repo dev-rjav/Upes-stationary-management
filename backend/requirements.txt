@@ -1,0 +1,8 @@
+﻿# placeholder — pin versions after scaffold
+# flask
+# flask-sqlalchemy
+# flask-login
+# openpyxl
+# pandas
+# thefuzz[speedup]
+# reportlab
