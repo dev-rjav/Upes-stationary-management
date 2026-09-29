@@ -1,1 +1,1 @@
-﻿# placeholder
+from app.services import cap_service, stock_service  # noqa: F401

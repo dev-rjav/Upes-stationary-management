@@ -73,3 +73,7 @@ ehthumbs.db
 *.swp
 *.swo
 *~
+
+# logs & derived data
+*.log
+data/extracted.json

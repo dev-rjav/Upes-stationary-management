@@ -1,8 +1,8 @@
-﻿# placeholder — pin versions after scaffold
-# flask
-# flask-sqlalchemy
-# flask-login
-# openpyxl
-# pandas
-# thefuzz[speedup]
-# reportlab
+# Pinned 2026-09-29 to the versions verified running (audit P0)
+flask==3.1.3
+flask-sqlalchemy==3.1.1
+flask-login==0.6.3
+openpyxl==3.1.5
+thefuzz==0.22.1
+# (pandas was in the original scaffold list but is unused in code — dropped)
+# (reportlab dropped — D22: CSV-only reports)

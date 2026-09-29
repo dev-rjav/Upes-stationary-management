@@ -1,3 +1,11 @@
-﻿# placeholder: Cluster model
-# Fields: id, name, description
-# Seeded from seeds/clusters.py (35 confirmed + any confirmed from PENDING_CONFIRMATIONS.md)
+from app import db
+
+
+class Cluster(db.Model):
+    __tablename__ = "clusters"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False, index=True)
+
+    def to_dict(self):
+        return {"id": self.id, "name": self.name}

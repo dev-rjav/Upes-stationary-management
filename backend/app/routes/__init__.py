@@ -1,1 +1,1 @@
-﻿# placeholder: register all blueprints
+from app.routes import auth, dashboard, items, reports, requests, stock, teacher  # noqa: F401
