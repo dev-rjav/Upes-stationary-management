@@ -1,10 +1,81 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { listItems } from "../../api/items";
-import { createRequest } from "../../api/requests";
+import { createRequest, statusLookup } from "../../api/requests";
 import SAPLookup from "../../components/SAPLookup";
 import ItemSelector from "../../components/ItemSelector";
 import KioskCart from "../../components/KioskCart";
 import useCapCheck from "../../hooks/useCapCheck";
+
+// P1: teacher can check their own request status by number + SAP ID (no login).
+function StatusCheck() {
+  const [open, setOpen] = useState(false);
+  const [no, setNo] = useState("");
+  const [sap, setSap] = useState("");
+  const [result, setResult] = useState(null);
+  const [err, setErr] = useState("");
+  const check = async (e) => {
+    e.preventDefault();
+    setErr("");
+    setResult(null);
+    try {
+      const r = await statusLookup(no.trim(), sap.trim());
+      setResult(r.data);
+    } catch (ex) {
+      setErr(ex.response?.data?.error || "couldn't check — number and SAP ID must both be right");
+    }
+  };
+  if (!open) {
+    return (
+      <button type="button" className="status-toggle" onClick={() => setOpen(true)}>
+        Already made a request? Check its status →
+      </button>
+    );
+  }
+  return (
+    <div className="card checkout-card" style={{ marginBottom: 12 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 700, marginTop: 0 }}>Check my request</h3>
+      <form onSubmit={check}>
+        <div className="row">
+          <label className="fld" style={{ marginBottom: 8 }}>
+            <span>Request number (from your confirmation)</span>
+            <input value={no} onChange={(e) => setNo(e.target.value)} placeholder="e.g. 645" inputMode="numeric" />
+          </label>
+          <label className="fld" style={{ marginBottom: 8 }}>
+            <span>Your SAP ID</span>
+            <input value={sap} onChange={(e) => setSap(e.target.value)} placeholder="e.g. 2021A1P0601" />
+          </label>
+        </div>
+        {err && <div className="err" style={{ marginTop: 8 }}>{err}</div>}
+        {result && (
+          <div style={{ marginTop: 10 }}>
+            <p className="small muted" style={{ marginTop: 0 }}>{result.teacher} — your recent requests:</p>
+            {result.requests.map((r) => (
+              <div key={r.no} className="cart-row" style={{ borderBottom: "1px solid var(--line)" }}>
+                <div className="nm">
+                  #{r.no}
+                  <small>
+                    {r.status === "fulfilled"
+                      ? `collected ${String(r.fulfilled_at).slice(0, 16)}`
+                      : r.status === "pending"
+                        ? "waiting at the counter"
+                        : "rejected"}
+                    {" · "}
+                    {r.items.map((i) => `${i.qty}× ${i.item}${i.returned ? ` (↩${i.returned})` : ""}`).join(", ")}
+                  </small>
+                </div>
+                <span className={`badge ${r.status}`}>{r.status}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="inline" style={{ marginTop: 10 }}>
+          <button className="btn primary" disabled={!no || !sap}>Check status</button>
+          <button type="button" className="btn" onClick={() => { setOpen(false); setResult(null); setErr(""); }}>← Back to ordering</button>
+        </div>
+      </form>
+    </div>
+  );
+}
 
 // Kiosk, Norman pass:
 //  - grid of cards, ONE obvious action each (+ Add -> - n +)
@@ -156,6 +227,8 @@ export default function RequestForm() {
     <div className="kiosk-page">
       <div className="kicker">UPES Stationery</div>
       <p className="tagline">Order on your phone · collect at the counter · no standing in line</p>
+
+      <StatusCheck />
 
       <div className="card checkout-card">
         <SAPLookup clusters={clusters} onFound={(t) => { setTeacher(t); setErr(""); }} />

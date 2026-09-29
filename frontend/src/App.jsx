@@ -9,6 +9,7 @@ import StockIn from "./pages/receptionist/StockIn";
 import Items from "./pages/receptionist/Items";
 import Reports from "./pages/receptionist/Reports";
 import ManualRequest from "./pages/receptionist/ManualRequest";
+import Teachers from "./pages/receptionist/Teachers";
 import RequestForm from "./pages/RequestForm";
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="items" element={<Items />} />
           <Route path="reports" element={<Reports />} />
           <Route path="manual-request" element={<ManualRequest />} />
+          <Route path="teachers" element={<Teachers />} />
         </Route>
         <Route path="*" element={<Navigate to="/request" replace />} />
       </Routes>

@@ -3,12 +3,26 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from werkzeug.security import check_password_hash
 
 from config import config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+
+
+def _light_migrate():
+    """Tiny additive migrations for the dev SQLite DB (create_all won't alter)."""
+    from sqlalchemy import inspect, text
+    ins = inspect(db.engine)
+    if "requests" in ins.get_table_names():
+        cols = {c["name"] for c in ins.get_columns("requests")}
+        for col, ddl in (
+            ("acted_by", "ALTER TABLE requests ADD COLUMN acted_by VARCHAR(120) DEFAULT ''"),
+            ("reject_reason", "ALTER TABLE requests ADD COLUMN reject_reason VARCHAR(300) DEFAULT ''"),
+        ):
+            if col not in cols:
+                db.session.execute(text(ddl))
+        db.session.commit()
 
 
 def create_app(config_name="default"):
@@ -25,7 +39,7 @@ def create_app(config_name="default"):
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
 
-    from app.models import cluster, item, notification, receptionist, request, stock, teacher  # noqa: F401
+    from app.models import cluster, item, notification, receptionist, request, returns, stock, teacher  # noqa: F401
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -33,6 +47,7 @@ def create_app(config_name="default"):
 
     with app.app_context():
         db.create_all()
+        _light_migrate()
         from app.seeds import seed_if_empty
         seed_if_empty()
 

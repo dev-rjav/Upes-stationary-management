@@ -8,6 +8,7 @@ const LINKS = [
   { to: "/receptionist/stock", ico: "📦", label: "Stock" },
   { to: "/receptionist/stock-in", ico: "🚚", label: "Stock In (Excel)" },
   { to: "/receptionist/items", ico: "🏷️", label: "Items & Caps" },
+  { to: "/receptionist/teachers", ico: "🎓", label: "Teachers" },
   { to: "/receptionist/reports", ico: "📄", label: "Reports" },
 ];
 

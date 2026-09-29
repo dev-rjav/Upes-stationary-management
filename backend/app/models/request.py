@@ -38,11 +38,22 @@ class Request(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.now(), nullable=False, index=True)
     created_by = db.Column(db.String(120), default="teacher")  # 'teacher' | receptionist name
     fulfilled_at = db.Column(db.DateTime, nullable=True)
+    acted_by = db.Column(db.String(120), default="")  # P1: who fulfilled/rejected (audit gap)
+    reject_reason = db.Column(db.String(300), default="")
 
     teacher = db.relationship("Teacher")
     items = db.relationship("RequestItem", back_populates="request", cascade="all, delete-orphan", lazy="select")
 
+    def _returned_by_item(self):
+        from collections import Counter
+        from app.models.returns import ReturnLog
+        c = Counter()
+        for r in ReturnLog.query.filter_by(request_id=self.id).all():
+            c[r.item_id] += r.qty
+        return c
+
     def to_dict(self, with_items=True):
+        returned = self._returned_by_item() if with_items else {}
         d = {
             "id": self.id,
             "teacher": self.teacher.name if self.teacher else None,
@@ -54,8 +65,10 @@ class Request(db.Model):
             "created_at": self.created_at.isoformat(sep=" ") if self.created_at else None,
             "fulfilled_at": self.fulfilled_at.isoformat(sep=" ") if self.fulfilled_at else None,
             "created_by": self.created_by,
+            "acted_by": self.acted_by,
+            "reject_reason": self.reject_reason,
             "total": round(sum((i.unit_rate or 0) * (i.qty or 0) for i in self.items), 2),
         }
         if with_items:
-            d["items"] = [i.to_dict() for i in self.items]
+            d["items"] = [{**i.to_dict(), "returned": returned.get(i.item_id, 0)} for i in self.items]
         return d

@@ -1,10 +1,11 @@
 import datetime as dt
+import re
 
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 
 from app import db
-from app.models import Item, Request, RequestItem, Teacher
+from app.models import Item, Request, RequestItem, ReturnLog, Stock, Teacher, returned_for
 from app.services import cap_service, stock_service
 from app.utils import notifications
 
@@ -75,6 +76,7 @@ def create_manual():
     db.session.commit()
     if is_override:
         notifications.notify_event("override", f"Cap override for {t.name}: " + (d.get("override_reason") or "").strip())
+        db.session.commit()  # P1 fix: audit bug — notify flushed but was never committed
     return jsonify({"request": req.to_dict()}), 201
 
 
@@ -153,7 +155,17 @@ def fulfill(req_id):
     req = Request.query.get_or_404(req_id)
     if req.status != "pending":
         return jsonify({"error": f"request is {req.status}, not pending"}), 409
+    # P1: over-issue guard — all-or-nothing, names the short items (audit: was a silent clamp)
+    shortages = []
+    for ri in req.items:
+        s = Stock.query.get(ri.item_id)
+        on_hand = s.quantity_on_hand if s else 0
+        if on_hand < ri.qty:
+            shortages.append({"item": ri.item.name, "requested": ri.qty, "available": on_hand})
+    if shortages:
+        return jsonify({"error": "insufficient stock", "shortages": shortages}), 409
     stock_service.deduct_stock(req)
+    req.acted_by = current_user.name
     db.session.commit()
     return jsonify({"request": req.to_dict()})
 
@@ -164,6 +176,84 @@ def reject(req_id):
     req = Request.query.get_or_404(req_id)
     if req.status != "pending":
         return jsonify({"error": f"request is {req.status}, not pending"}), 409
+    d = request.get_json(silent=True) or {}
     stock_service.reject(req)
+    req.acted_by = current_user.name
+    req.reject_reason = (d.get("reason") or "").strip()
     db.session.commit()
     return jsonify({"request": req.to_dict()})
+
+
+@bp.post("/<int:req_id>/return")
+@login_required
+def record_return(req_id):
+    """P1: reverse leg. qty can never exceed issued - already-returned; stock goes back up."""
+    req = Request.query.get_or_404(req_id)
+    if req.status != "fulfilled":
+        return jsonify({"error": f"request is {req.status}, not fulfilled"}), 409
+    d = request.get_json(silent=True) or {}
+    item_id = d.get("item_id")
+    try:
+        qty = int(d.get("qty"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "qty required"}), 400
+    line = next((i for i in req.items if i.item_id == item_id), None)
+    if not line:
+        return jsonify({"error": "item not on this request"}), 400
+    already = returned_for(req, item_id)
+    max_ret = line.qty - already
+    if qty <= 0 or qty > max_ret:
+        return jsonify({"error": f"can return between 1 and {max_ret} (issued {line.qty}, already returned {already})"}), 400
+    s = Stock.query.get(item_id)
+    if s is None:
+        s = Stock(item_id=item_id, quantity_on_hand=0)
+        db.session.add(s)
+    s.quantity_on_hand += qty
+    s.last_updated = dt.datetime.utcnow()
+    r = ReturnLog(request_id=req.id, item_id=item_id, qty=qty, reason=(d.get("reason") or "").strip(), by=current_user.name)
+    db.session.add(r)
+    db.session.commit()
+    return jsonify({
+        "ok": True,
+        "line": {"item": line.item.name, "issued": line.qty, "returned": already + qty, "consumed": line.qty - already - qty},
+        "return": r.to_dict(),
+    })
+
+
+@bp.get("/status")
+def status_lookup():
+    """P1: public — a teacher checks their own requests by number + SAP ID.
+    The number must match AND the SAP must be the request's teacher: no snooping other people's requests."""
+    no = request.args.get("no")
+    sap = re.sub(r"\s+", "", str(request.args.get("sap") or "")).upper()
+    if not no or not sap:
+        return jsonify({"error": "request number and SAP ID are both needed"}), 400
+    req = Request.query.get(int(no) if str(no).isdigit() else 0)
+    if not req or not req.teacher or req.teacher.sap_id.upper() != sap:
+        return jsonify({"error": "no such request for that SAP ID"}), 404
+    own = (
+        Request.query.filter_by(teacher_id=req.teacher.id)
+        .order_by(Request.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    return jsonify({
+        "teacher": req.teacher.name,
+        "requests": [
+            {
+                "no": r.id,
+                "status": r.status,
+                "created_at": r.created_at.isoformat(sep=" ") if r.created_at else None,
+                "fulfilled_at": r.fulfilled_at.isoformat(sep=" ") if r.fulfilled_at else None,
+                "items": [
+                    {
+                        "item": i.item.name if i.item else "?",
+                        "qty": i.qty,
+                        "returned": returned_for(r, i.item_id),
+                    }
+                    for i in r.items
+                ],
+            }
+            for r in own
+        ],
+    })

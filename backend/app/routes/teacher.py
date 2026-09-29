@@ -1,6 +1,7 @@
 import re
 
 from flask import Blueprint, jsonify, request
+from flask_login import login_required
 
 from app import db
 from app.models import Cluster, Teacher
@@ -48,6 +49,42 @@ def caps():
         return jsonify({"error": "unknown SAP ID — complete the form first"}), 404
     from app.services import cap_service
     return jsonify({"teacher": t.to_dict(), "week": cap_service.week_info(), "caps": cap_service.caps_summary(t.id)})
+
+
+@bp.get("/list")
+@login_required
+def list_teachers():
+    """P1: Teachers/Departments management view (was DB-only before)."""
+    q = (request.args.get("q") or "").strip().lower()
+    cluster = (request.args.get("cluster") or "").strip().lower()
+    query = Teacher.query.order_by(Teacher.name)
+    if q:
+        like = f"%{q}%"
+        query = query.filter(db.or_(Teacher.name.ilike(like), Teacher.sap_id.ilike(like)))
+    if cluster:
+        query = query.join(Cluster, Cluster.id == Teacher.cluster_id).filter(Cluster.name.ilike(f"%{cluster}%"))
+    teachers = query.all()
+    return jsonify([t.to_dict() for t in teachers])
+
+
+@bp.get("/clusters")
+@login_required
+def list_clusters():
+    return jsonify([c.to_dict() for c in Cluster.query.order_by(Cluster.name).all()])
+
+
+@bp.post("/<int:teacher_id>/cluster")
+@login_required
+def set_cluster(teacher_id):
+    """Correct a teacher's department — the one field the kiosk never lets them change later."""
+    t = Teacher.query.get_or_404(teacher_id)
+    d = request.get_json(silent=True) or {}
+    c = Cluster.query.filter(db.func.lower(Cluster.name) == (d.get("cluster") or "").strip().lower()).first()
+    if not c:
+        return jsonify({"error": "unknown cluster"}), 400
+    t.cluster_id = c.id
+    db.session.commit()
+    return jsonify({"teacher": t.to_dict()})
 
 
 @bp.get("/suggestions")
