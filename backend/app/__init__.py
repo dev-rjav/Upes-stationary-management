@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -39,7 +39,15 @@ def create_app(config_name="default"):
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
 
-    from app.models import cluster, item, notification, receptionist, request, returns, stock, teacher  # noqa: F401
+    # P2: API callers get a clean 401 JSON, not a 302 -> HTML login page
+    @login_manager.unauthorized_handler
+    def _unauthorized():
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "login required"}), 401
+        return login_manager.unauthorized()  # default redirect for page routes
+
+    from app.models import cluster, item, notification, receptionist, returns, stock, teacher  # noqa: F401
+    import app.models.request as request_model  # noqa: F401  (registers the model; aliased so it can't shadow flask.request)
 
     @login_manager.user_loader
     def load_user(user_id):

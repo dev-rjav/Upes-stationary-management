@@ -4,13 +4,21 @@ import { listItems, updateItem, createItem, addAlias } from "../../../api/items"
 export default function Items() {
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(null);
   const [showAliases, setShowAliases] = useState(false);
   const [aliasForm, setAliasForm] = useState({ alias: "", item_id: "" });
   const [newItem, setNewItem] = useState(null);
+  const PER = 100;
 
   const load = useCallback(() => {
-    listItems(q ? { q } : {}).then((r) => setRows(r.data)).catch((e) => alert(e.response?.data?.error || "failed to load"));
-  }, [q]);
+    listItems({ q: q || undefined, per_page: PER, page })
+      .then((r) => {
+        setRows(r.data.items);
+        setTotal(r.data.total);
+      })
+      .catch((e) => alert(e.response?.data?.error || "failed to load"));
+  }, [q, page]);
 
   useEffect(load, [load]);
 
@@ -58,7 +66,7 @@ export default function Items() {
           </p>
         </div>
         <div className="inline">
-          <input placeholder="Search items…" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 220 }} />
+          <input placeholder="Search items…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ width: 220 }} />
           <button className="btn" onClick={() => setShowAliases(!showAliases)}>Aliases</button>
           <button className="btn primary" onClick={() => setNewItem({ name: "", unit: "EA", rate: "", monthly_cap: 5, weekly_cap: 2, low_stock_threshold: 10, is_bulk: false })}>+ New item</button>
         </div>
@@ -146,6 +154,19 @@ export default function Items() {
             </tbody>
           </table>
         </div>
+        {total != null && Math.ceil(total / PER) > 1 && (
+          <div className="pager">
+            <button className="btn sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+              ← Prev
+            </button>
+            <span className="muted small">
+              Page {page} of {Math.ceil(total / PER)} · {total} items
+            </span>
+            <button className="btn sm" disabled={page >= Math.ceil(total / PER)} onClick={() => setPage(page + 1)}>
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

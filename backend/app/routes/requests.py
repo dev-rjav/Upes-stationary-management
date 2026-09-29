@@ -184,6 +184,21 @@ def reject(req_id):
     return jsonify({"request": req.to_dict()})
 
 
+@bp.post("/<int:req_id>/reopen")
+@login_required
+def reopen(req_id):
+    """P2: undo for reject — rejected -> pending. Nothing is destroyed; the
+    reject stays in the card's reason line as history."""
+    req = Request.query.get_or_404(req_id)
+    if req.status != "rejected":
+        return jsonify({"error": f"request is {req.status}, not rejected"}), 409
+    req.status = "pending"
+    req.acted_by = current_user.name
+    req.fulfilled_at = None
+    db.session.commit()
+    return jsonify({"request": req.to_dict()})
+
+
 @bp.post("/<int:req_id>/return")
 @login_required
 def record_return(req_id):

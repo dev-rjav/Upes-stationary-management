@@ -100,6 +100,14 @@ def dashboard():
     )
 
 
+@bp.get("/notifications/unread")
+@login_required
+def unread():
+    """P2: lightweight count for the nav bell (full dashboard payload is heavier)."""
+    n = Notification.query.filter_by(read=False).count()
+    return jsonify({"unread": n})
+
+
 @bp.post("/notifications/read-all")
 @login_required
 def read_all():

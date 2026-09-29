@@ -2,8 +2,9 @@
   --bg: #f5f6fa;
   --surface: #ffffff;
   --ink: #1a1d29;
-  --ink-2: #5a6072;
-  --ink-3: #9aa0b4;
+  --ink-2: #555b6e;
+  /* P2: --ink-3 darkened to #5f667d — was #9aa0b4 (2.9:1, failed AA for small text) */
+  --ink-3: #5f667d;
   --line: #e6e8f0;
   --accent: #3d5afe;
   --accent-ink: #ffffff;
@@ -495,3 +496,13 @@ label.fld span { display: block; font-size: 12px; font-weight: 600; color: var(-
 .ret-form { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
 .ret-form select, .ret-form input { width: auto; padding: 7px 10px; font-size: 13px; }
 .ret-form input[placeholder="Reason (optional)"] { flex: 2; min-width: 140px; }
+
+/* P2: nav bell + pager */
+.nav-bell { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #c9cddd; text-decoration: none; font-weight: 500; font-size: 13.5px; position: relative; }
+.nav-bell:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.bell-badge {
+  margin-left: auto; background: var(--bad); color: #fff; border-radius: 99px;
+  min-width: 20px; height: 20px; display: grid; place-items: center;
+  font-size: 11px; font-weight: 800; padding: 0 5px;
+}
+.pager { display: flex; align-items: center; gap: 14px; justify-content: center; margin-top: 16px; }

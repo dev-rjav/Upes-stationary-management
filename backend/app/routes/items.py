@@ -58,7 +58,32 @@ def list_items():
                 if len(items) >= top:
                     break
         return jsonify([_item_dict(i) for i in items])
-    items = Item.query.filter_by(active=True).order_by(Item.name).all()
+    query = Item.query.filter_by(active=True).order_by(Item.name)
+    if q:
+        like = f"%{q}%"
+        query = query.filter(db.or_(Item.name.ilike(like), Item.hsn_code.ilike(like)))
+    per_page = request.args.get("per_page", type=int)
+    page = request.args.get("page", type=int, default=1)
+    total = query.count()
+    if per_page:
+        # P2: server-side pagination for the 400+ item management table
+        # (also catches aliases of matching canonicals below)
+        items = query.offset((page - 1) * per_page).limit(per_page).all()
+        ids = {i.id for i in items}
+        extra = (
+            db.session.query(Item)
+            .filter(Item.active.is_(True))
+            .join(ItemAlias, ItemAlias.item_id == Item.id)
+            .filter(ItemAlias.alias.ilike(like))
+            .all()
+            if q
+            else []
+        )
+        for i in extra:
+            if i.id not in ids and len(items) < per_page:
+                items.append(i)
+        return jsonify({"total": total, "page": page, "per_page": per_page, "items": [_item_dict(i) for i in items]})
+    items = query.all()
     if q:
         items = [i for i in items if q in i.name.lower() or any(q in a.lower() for a in i.all_names()[1:])]
     return jsonify([_item_dict(i) for i in items])

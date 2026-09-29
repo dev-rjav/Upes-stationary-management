@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fulfillRequest, rejectRequest, recordReturn } from "../../api/requests";
+import { fulfillRequest, rejectRequest, recordReturn, reopenRequest } from "../../api/requests";
 
 export default function RequestCard({ req, onDone }) {
   const [busy, setBusy] = useState("");
@@ -90,6 +90,11 @@ export default function RequestCard({ req, onDone }) {
           </>
         ) : (
           <span className={`badge ${req.status}`}>{req.status}</span>
+        )}
+        {req.status === "rejected" && (
+          <button className="btn sm" disabled={!!busy} onClick={() => act("re", () => reopenRequest(req.id))} title="Undo the rejection — back to pending">
+            {busy === "re" ? "…" : "↻ Reopen"}
+          </button>
         )}
         {req.status === "fulfilled" && returnable.length > 0 && !returning && (
           <button className="btn sm" onClick={() => { setReturning(true); setRet({ item_id: "", qty: 1, reason: "" }); }}>
