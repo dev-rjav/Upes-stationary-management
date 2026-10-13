@@ -139,8 +139,10 @@ function ItemClusterTab({ items }) {
           {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
         </select>
         {selItem && (
-          <span style={{ fontSize: 13, color: '#6B6B6B' }}>
-            {enabledCount}/{itemClusters.length} departments enabled
+          <span style={{ fontSize: 13, color: enabledCount === 0 ? '#DC2626' : '#6B6B6B', fontWeight: enabledCount === 0 ? 600 : 400 }}>
+            {enabledCount === 0
+              ? 'Not enabled for any department — use "Enable all" or toggle below'
+              : `${enabledCount}/${itemClusters.length} departments enabled`}
           </span>
         )}
         <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
@@ -264,7 +266,7 @@ export default function Items() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
               <thead>
                 <tr style={{ background: '#f4f8fc' }}>
-                  {['Name', 'Unit', 'Rate (₹)', 'Per-checkout', 'Monthly', 'Weekly', 'Low threshold', ''].map(h => <th key={h} style={TH}>{h}</th>)}
+                  {['Name', 'Unit', 'Rate (₹)', 'Depts', 'Per-checkout', 'Monthly', 'Weekly', 'Low threshold', ''].map(h => <th key={h} style={TH}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -274,6 +276,11 @@ export default function Items() {
                     <td style={{ padding: '10px 14px', color: '#6B6B6B' }}>{it.unit}</td>
                     <td style={{ padding: '10px 14px', fontFamily: "'IBM Plex Mono',monospace" }}>
                       {it.default_rate != null ? `₹${it.default_rate.toFixed(2)}` : '—'}
+                    </td>
+                    <td style={{ padding: '10px 14px' }}>
+                      {it.enabled_cluster_count === 0
+                        ? <span style={{ fontSize: 12, fontWeight: 600, color: '#DC2626', background: '#FEE2E2', padding: '2px 8px', borderRadius: 10 }}>None</span>
+                        : <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 13 }}>{it.enabled_cluster_count}/35</span>}
                     </td>
                     <td style={{ padding: '10px 14px', fontFamily: "'IBM Plex Mono',monospace" }}>{it.per_checkout_cap ?? '—'}</td>
                     <td style={{ padding: '10px 14px', fontFamily: "'IBM Plex Mono',monospace" }}>{it.monthly_cap ?? '—'}</td>

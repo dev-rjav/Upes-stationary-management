@@ -10,7 +10,14 @@ items_bp = Blueprint('items', __name__)
 @login_required
 def list_items():
     items = StationaryItem.query.order_by(StationaryItem.name).all()
-    return jsonify([i.to_dict() for i in items])
+    result = []
+    for item in items:
+        d = item.to_dict()
+        d['enabled_cluster_count'] = ClusterItem.query.filter_by(
+            item_id=item.id, is_enabled=True
+        ).count()
+        result.append(d)
+    return jsonify(result)
 
 
 @items_bp.post('/items')
