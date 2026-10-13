@@ -42,23 +42,23 @@ function ItemModal({ item, onSave, onClose }) {
             style={{ height: 40, padding: '0 12px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14 }} />
         </label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48', minWidth: 0 }}>
             Unit
             <select value={form.unit} onChange={e => set('unit', e.target.value)}
-              style={{ height: 40, padding: '0 10px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14, background: '#fff' }}>
+              style={{ width: '100%', boxSizing: 'border-box', height: 40, padding: '0 10px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14, background: '#fff' }}>
               {UNITS.map(u => <option key={u}>{u}</option>)}
             </select>
           </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48', minWidth: 0 }}>
             HSN Code
             <input value={form.hsn_code || ''} onChange={e => set('hsn_code', e.target.value)}
-              style={{ height: 40, padding: '0 12px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14 }} />
+              style={{ width: '100%', boxSizing: 'border-box', height: 40, padding: '0 12px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14 }} />
           </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13.5, fontWeight: 500, color: '#4A4A48', minWidth: 0 }}>
             Rate (₹)
             <input type="number" step="0.01" min="0" value={form.default_rate ?? ''} onChange={e => set('default_rate', e.target.value === '' ? null : parseFloat(e.target.value))}
               placeholder="—"
-              style={{ height: 40, padding: '0 12px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14 }} />
+              style={{ width: '100%', boxSizing: 'border-box', height: 40, padding: '0 12px', border: '1px solid #CFCFCB', borderRadius: 8, font: 'inherit', fontSize: 14 }} />
           </label>
         </div>
         <fieldset style={{ border: '1px solid #E5E5E5', borderRadius: 9, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
