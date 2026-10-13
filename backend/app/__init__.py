@@ -122,6 +122,39 @@ def _run_lightweight_migrations():
         ))
         db.session.commit()
 
+    _reset_cluster_visibility_v2()
+
+
+def _reset_cluster_visibility_v2():
+    """One-time migration: set is_enabled based on the priority flag in seeds/items.py.
+
+    Priority items → enabled for all clusters. Non-priority → disabled.
+    Guarded by SystemSettings key so it runs exactly once on an existing DB.
+    Fresh DBs are already seeded correctly by _seed_if_empty().
+    """
+    from .models import SystemSettings, StationaryItem, ClusterItem, Cluster
+    from seeds.items import PRIORITY_ITEM_NAMES
+
+    if SystemSettings.get('cluster_visibility_reset_v2'):
+        return
+
+    clusters = Cluster.query.all()
+    items = StationaryItem.query.all()
+    if not clusters or not items:
+        return
+
+    for item in items:
+        is_priority = item.name in PRIORITY_ITEM_NAMES
+        for cluster in clusters:
+            ci = ClusterItem.query.filter_by(cluster_id=cluster.id, item_id=item.id).first()
+            if ci:
+                ci.is_enabled = is_priority
+            elif is_priority:
+                db.session.add(ClusterItem(cluster_id=cluster.id, item_id=item.id, is_enabled=True))
+
+    db.session.commit()
+    SystemSettings.set('cluster_visibility_reset_v2', '1')
+
 
 def _seed_demo_data():
     from seeds.demo import seed_demo, top_up_demo_current_month

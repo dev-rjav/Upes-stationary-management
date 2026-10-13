@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_login import login_required
 from ..models import Teacher, Cluster, ClusterItem, StationaryItem
 from ..services.cap_service import get_remaining
 from .. import db
@@ -61,3 +62,14 @@ def cluster_items(cluster_id):
 
     result.sort(key=lambda x: x['name'])
     return jsonify(result)
+
+
+@teacher_bp.patch('/clusters/<int:cluster_id>')
+@login_required
+def patch_cluster(cluster_id):
+    cluster = Cluster.query.get_or_404(cluster_id)
+    data = request.get_json(force=True)
+    if 'caps_disabled' in data:
+        cluster.caps_disabled = bool(data['caps_disabled'])
+    db.session.commit()
+    return jsonify(cluster.to_dict())
