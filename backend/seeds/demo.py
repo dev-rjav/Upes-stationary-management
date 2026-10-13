@@ -196,7 +196,7 @@ def seed_demo(db):
     db.session.flush()
 
     for item in items:
-        rate = ITEM_RATES.get(item.name, 50.0)
+        rate = item.default_rate or 50.0
         db.session.add(StockIn(
             batch_id=batch.id,
             item_id=item.id,

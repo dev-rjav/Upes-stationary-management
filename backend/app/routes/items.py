@@ -27,6 +27,7 @@ def create_item():
         name=name,
         unit=data.get('unit', 'EA'),
         hsn_code=data.get('hsn_code'),
+        default_rate=data.get('default_rate') or None,
         low_stock_threshold=int(data.get('low_stock_threshold', 10)),
         per_checkout_cap=data.get('per_checkout_cap') or None,
         monthly_cap=data.get('monthly_cap') or None,
@@ -48,6 +49,9 @@ def update_item(item_id):
     for field in ('name', 'unit', 'hsn_code'):
         if field in data:
             setattr(item, field, data[field])
+
+    if 'default_rate' in data:
+        item.default_rate = float(data['default_rate']) if data['default_rate'] not in (None, '') else None
 
     for cap_field in ('low_stock_threshold', 'per_checkout_cap', 'monthly_cap', 'weekly_cap'):
         if cap_field in data:
@@ -79,6 +83,25 @@ def add_alias(item_id):
     db.session.add(alias)
     db.session.commit()
     return jsonify(alias.to_dict()), 201
+
+
+@items_bp.get('/items/<int:item_id>/all-clusters')
+@login_required
+def get_item_clusters(item_id):
+    StationaryItem.query.get_or_404(item_id)
+    all_clusters = Cluster.query.order_by(Cluster.name).all()
+    result = []
+    for cluster in all_clusters:
+        ci = ClusterItem.query.filter_by(cluster_id=cluster.id, item_id=item_id).first()
+        result.append({
+            'cluster_id': cluster.id,
+            'cluster_name': cluster.name,
+            'caps_disabled': cluster.caps_disabled,
+            'is_enabled': ci.is_enabled if ci else False,
+            'per_checkout_cap': ci.per_checkout_cap if ci else None,
+            'monthly_cap': ci.monthly_cap if ci else None,
+        })
+    return jsonify(result)
 
 
 # Department-level settings

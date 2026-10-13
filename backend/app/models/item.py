@@ -9,6 +9,7 @@ class StationaryItem(db.Model):
     name = db.Column(db.String(200), unique=True, nullable=False)
     unit = db.Column(db.String(16), nullable=False, default='EA')
     hsn_code = db.Column(db.String(20), nullable=True)
+    default_rate = db.Column(db.Float, nullable=True)
     low_stock_threshold = db.Column(db.Integer, nullable=False, default=10)
     per_checkout_cap = db.Column(db.Integer, nullable=True)
     monthly_cap = db.Column(db.Integer, nullable=True)
@@ -27,6 +28,7 @@ class StationaryItem(db.Model):
             'name': self.name,
             'unit': self.unit,
             'hsn_code': self.hsn_code,
+            'default_rate': self.default_rate,
             'low_stock_threshold': self.low_stock_threshold,
             'per_checkout_cap': self.per_checkout_cap,
             'monthly_cap': self.monthly_cap,

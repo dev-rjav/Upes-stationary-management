@@ -99,13 +99,26 @@ def _run_lightweight_migrations():
     from sqlalchemy import inspect, text
 
     inspector = inspect(db.engine)
+
     try:
-        cols = {c['name'] for c in inspector.get_columns('clusters')}
+        cluster_cols = {c['name'] for c in inspector.get_columns('clusters')}
     except Exception:
         return
-    if 'caps_disabled' not in cols:
+
+    if 'caps_disabled' not in cluster_cols:
         db.session.execute(text(
             'ALTER TABLE clusters ADD COLUMN caps_disabled BOOLEAN NOT NULL DEFAULT 0'
+        ))
+        db.session.commit()
+
+    try:
+        item_cols = {c['name'] for c in inspector.get_columns('stationary_items')}
+    except Exception:
+        return
+
+    if 'default_rate' not in item_cols:
+        db.session.execute(text(
+            'ALTER TABLE stationary_items ADD COLUMN default_rate FLOAT'
         ))
         db.session.commit()
 
@@ -117,7 +130,7 @@ def _seed_demo_data():
 
 
 def _seed_if_empty():
-    from .models import Receptionist, Cluster, StationaryItem, Stock, SystemSettings
+    from .models import Receptionist, Cluster, StationaryItem, Stock, SystemSettings, ClusterItem
     from seeds.clusters import CLUSTER_NAMES
     from seeds.items import ITEMS_DATA
 
@@ -142,13 +155,26 @@ def _seed_if_empty():
         for d in ITEMS_DATA:
             item = StationaryItem(
                 name=d['name'], unit=d['unit'],
-                hsn_code=d.get('hsn'), low_stock_threshold=d.get('threshold', 10),
+                hsn_code=d.get('hsn'),
+                default_rate=d.get('rate'),
+                low_stock_threshold=d.get('threshold', 10),
                 per_checkout_cap=d.get('per_checkout_cap'),
                 monthly_cap=d.get('monthly_cap'),
             )
             db.session.add(item)
             db.session.flush()
             db.session.add(Stock(item_id=item.id, quantity_on_hand=d.get('initial_stock', 0)))
+        db.session.commit()
+
+    # Enable all items for every cluster by default
+    if ClusterItem.query.count() == 0:
+        all_clusters = Cluster.query.all()
+        all_items = StationaryItem.query.all()
+        for cluster in all_clusters:
+            for item in all_items:
+                db.session.add(ClusterItem(
+                    cluster_id=cluster.id, item_id=item.id, is_enabled=True
+                ))
         db.session.commit()
 
     if not SystemSettings.get('pending_request_ttl_hours'):
