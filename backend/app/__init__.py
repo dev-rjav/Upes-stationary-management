@@ -52,6 +52,7 @@ def create_app(config_name='default'):
         if not app.config.get('TESTING'):
             _run_lightweight_migrations()
             _seed_if_empty()
+            _apply_password_overrides()
             # Demo data is for development only — set SEED_DEMO=0 in production.
             if os.environ.get('SEED_DEMO', '1') == '1':
                 _seed_demo_data()
@@ -152,6 +153,29 @@ def _seed_if_empty():
 
     if not SystemSettings.get('pending_request_ttl_hours'):
         SystemSettings.set('pending_request_ttl_hours', '48')
+
+
+def _apply_password_overrides():
+    """Reset seeded account passwords from env when RESET_PASSWORDS=1.
+
+    First-run seeding already honours ADMIN_PASSWORD / GUEST_PASSWORD. This lets
+    a reinstall update the passwords of accounts that already exist (the
+    installer sets RESET_PASSWORDS=1 only when the operator opts in).
+    """
+    if os.environ.get('RESET_PASSWORDS') != '1':
+        return
+    from .models import Receptionist
+    changed = False
+    for username, env_key in (('invinder_kaur', 'ADMIN_PASSWORD'), ('guest', 'GUEST_PASSWORD')):
+        pw = os.environ.get(env_key)
+        if not pw:
+            continue
+        user = Receptionist.query.filter_by(username=username).first()
+        if user:
+            user.set_password(pw)
+            changed = True
+    if changed:
+        db.session.commit()
 
 
 def _start_scheduler(app):

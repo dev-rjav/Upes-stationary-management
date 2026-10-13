@@ -56,9 +56,11 @@ backend\dist\StationeryServer\        <-- copy this whole folder to the laptop
 
 1. Create a working folder, e.g. `C:\Install\`, and put these in it:
    - `StationeryServer\`  (the folder from step 2)
-   - `install-service.bat`, `uninstall-service.bat`  (from `deploy\`)
+   - `install-service.bat`, `uninstall-service.bat`, `set-service-env.ps1`  (from `deploy\`)
    - `nssm.exe`  (download the 64-bit build from <https://nssm.cc/download>)
 2. **Right-click `install-service.bat` → Run as administrator.**
+3. When prompted, **type the ADMIN and GUEST passwords** (hidden input, entered
+   twice to confirm). These become the receptionist logins.
 
 It performs all of the following automatically:
 
@@ -68,10 +70,14 @@ It performs all of the following automatically:
 | `powercfg` never-sleep + **lid close = Do nothing** | laptop keeps serving with the lid shut | *run when lid closed* |
 | Firewall rule for TCP 8080 (private/domain) | lets LAN clients connect | *served to all users* |
 | NSSM service, **auto-start at boot**, **auto-restart on exit** | starts without login, resumes after stop/crash/power-cut | *auto-start on startup; resume on stoppage* |
-| Generates a fixed `SECRET_KEY` | logins survive restarts | — |
+| **Prompts for ADMIN/GUEST passwords** + generates a `SECRET_KEY` | you set real credentials at install; logins survive restarts | — |
 
-At the end it prints the **URL to hand out** (e.g. `http://192.168.1.50:8080`)
-and the first-run logins.
+At the end it prints the **URL to hand out** (e.g. `http://192.168.1.50:8080`).
+Staff log in as `invinder_kaur` / `guest` with the passwords you entered.
+
+> **Reinstalling over an existing database?** The installer detects it and asks
+> whether to update the existing accounts to the new passwords (data is kept
+> either way).
 
 ---
 
@@ -141,16 +147,13 @@ a **QR display** page at `/receptionist` → "Show QR code").
 
 ## 7. Security & credentials
 
-- **Set real passwords before first run.** The seed creates `invinder_kaur` and
-  `guest` using `ADMIN_PASSWORD` / `GUEST_PASSWORD` env vars (defaults
-  `admin123` / `guest123`). To set your own, add them to the service environment
-  **before the first start**:
-  ```
-  nssm set StationeryServer AppEnvironmentExtra PORT=8080 STATIONERY_DATA_DIR=C:\StationeryApp\data SEED_DEMO=0 SECRET_KEY=<keep-existing> ADMIN_PASSWORD=<pw> GUEST_PASSWORD=<pw>
-  nssm restart StationeryServer
-  ```
-  (These only take effect on the **first** run, when accounts are seeded. To
-  change later, reset via the app or delete the DB and reseed.)
+- **Passwords are set during install.** `install-service.bat` prompts for the
+  ADMIN and GUEST passwords (hidden, confirmed) and writes them to the service
+  environment, so you never hardcode credentials. On first run the accounts
+  `invinder_kaur` and `guest` are seeded with exactly those passwords.
+- **Changing passwords later:** re-run `install-service.bat`; it detects the
+  existing database and asks whether to update the accounts to the new
+  passwords (it sets `RESET_PASSWORDS=1` for that run). Your data is preserved.
 - The app runs over **plain HTTP on the LAN** — fine for an internal reception
   network. Do **not** port-forward it to the internet. If external access is
   ever needed, put it behind a VPN or a reverse proxy with TLS.
@@ -168,10 +171,11 @@ The server reads these environment variables (the installer sets the first four)
 | `STATIONERY_DATA_DIR` | `C:\StationeryApp\data` | folder holding `stationary.db` |
 | `SECRET_KEY` | *(random, fixed at install)* | Flask session signing key |
 | `SEED_DEMO` | `0` in prod | `1` seeds demo data (dev only) |
-| `ADMIN_PASSWORD` / `GUEST_PASSWORD` | `admin123` / `guest123` | seeded on first run |
+| `ADMIN_PASSWORD` / `GUEST_PASSWORD` | *(prompted at install)* | passwords for the two seeded accounts |
+| `RESET_PASSWORDS` | `0` | `1` updates existing accounts' passwords on boot |
 
 Files in this `deploy/` folder: `build.bat`, `StationeryServer.spec`,
-`install-service.bat`, `uninstall-service.bat`, `backup-db.bat`.
+`install-service.bat`, `set-service-env.ps1`, `uninstall-service.bat`, `backup-db.bat`.
 
 ---
 
