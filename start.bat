@@ -21,7 +21,8 @@ if not exist "%VENV%\Scripts\python.exe" (
 REM ── 2. Python packages ──────────────────────────────────────────────────────
 if not exist "%VENV%\Lib\site-packages\flask" (
     echo [2/3] Installing Python packages ^(first run only^)...
-    "%VENV%\Scripts\pip" install --quiet -r "%BACKEND%\requirements.txt"
+    "%VENV%\Scripts\pip" install --quiet --upgrade pip
+    "%VENV%\Scripts\pip" install --quiet --prefer-binary -r "%BACKEND%\requirements.txt"
     if errorlevel 1 goto :fail
 ) else (
     echo [2/3] Python packages OK.
