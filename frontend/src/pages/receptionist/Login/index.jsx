@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
-import upesMark from '../../../assets/upes-mark.png';
+import upesLogo from '../../../assets/upes-logo-full.png';
 
 export default function Login() {
   const { login, user } = useAuth();
@@ -34,7 +34,7 @@ export default function Login() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: '#f4f8fc' }}>
       <div style={{ width: '100%', maxWidth: 384, display: 'flex', flexDirection: 'column', gap: 28 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <img src={upesMark} alt="UPES" style={{ height: 46, width: 'auto', display: 'block', marginBottom: 4 }} />
+          <img src={upesLogo} alt="UPES" style={{ height: 36, width: 'auto', display: 'block', marginBottom: 4 }} />
           <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: '-0.01em' }}>Receptionist Desk</h1>
           <p style={{ margin: 0, fontSize: 14.5, color: '#6B6B6B' }}>Sign in to manage stationery requests.</p>
         </div>
