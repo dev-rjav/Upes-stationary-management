@@ -132,7 +132,7 @@ def _seed_demo_data():
 def _seed_if_empty():
     from .models import Receptionist, Cluster, StationaryItem, Stock, SystemSettings, ClusterItem
     from seeds.clusters import CLUSTER_NAMES
-    from seeds.items import ITEMS_DATA
+    from seeds.items import ITEMS_DATA, PRIORITY_ITEM_NAMES
 
     if Receptionist.query.count() == 0:
         import os
@@ -166,12 +166,14 @@ def _seed_if_empty():
             db.session.add(Stock(item_id=item.id, quantity_on_hand=d.get('initial_stock', 0)))
         db.session.commit()
 
-    # Enable all items for every cluster by default
+    # Enable priority items for every cluster; non-priority items start disabled
     if ClusterItem.query.count() == 0:
         all_clusters = Cluster.query.all()
-        all_items = StationaryItem.query.all()
+        priority_items = StationaryItem.query.filter(
+            StationaryItem.name.in_(PRIORITY_ITEM_NAMES)
+        ).all()
         for cluster in all_clusters:
-            for item in all_items:
+            for item in priority_items:
                 db.session.add(ClusterItem(
                     cluster_id=cluster.id, item_id=item.id, is_enabled=True
                 ))
