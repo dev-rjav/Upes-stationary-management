@@ -35,6 +35,11 @@ function fmtCurrency(n) {
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+function YTick({ x, y, payload }) {
+  const label = payload.value.length > 22 ? payload.value.slice(0, 21) + '…' : payload.value;
+  return <text x={x} y={y} dy={4} textAnchor="end" fontSize={11} fill="#4A4A48">{label}</text>;
+}
+
 // Department-wise drilldown: pick a department, see per-user bifurcation, download it.
 function DepartmentBreakdown({ month, year }) {
   const [departments, setDepartments] = useState([]);
@@ -196,22 +201,22 @@ export default function Dashboard() {
           </Card>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
-            <Card title="Top Items by Quantity" minH={220}>
-              <ResponsiveContainer width="100%" height={200}>
+            <Card title="Top Items by Quantity" minH={300}>
+              <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={topQty} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
                   <XAxis type="number" tick={{ fontSize: 11 }} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={110} />
+                  <YAxis type="category" dataKey="name" tick={<YTick />} width={150} />
                   <Tooltip />
                   <Bar dataKey="total_qty" fill="#0b66b2" radius={[0, 4, 4, 0]} name="Units" />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
 
-            <Card title="Top Items by Cost" minH={220}>
-              <ResponsiveContainer width="100%" height={200}>
+            <Card title="Top Items by Cost" minH={300}>
+              <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={topCost} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
                   <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={110} />
+                  <YAxis type="category" dataKey="name" tick={<YTick />} width={150} />
                   <Tooltip formatter={v => fmtCurrency(v)} />
                   <Bar dataKey="total_cost" fill="#5aa9e0" radius={[0, 4, 4, 0]} name="Cost" />
                 </BarChart>
