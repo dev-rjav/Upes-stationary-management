@@ -1,0 +1,72 @@
+/* ---------- UPES light theme tokens (ported from request-app style) ---------- */
+:root {
+  --bg: #f4f8fc;
+  --surface: #ffffff;
+  --header-bg: #e8f3fc;
+  --border: #d6e3ef;
+  --border-strong: #bfd0e0;
+  --text: #1f2b3a;
+  --muted: #5f6f82;
+  --primary: #0b66b2;
+  --primary-dark: #084d8a;
+  --primary-light: #5aa9e0;
+  --primary-soft: #d9ecfa;
+  --primary-softer: #eef6fd;
+  /* UPES brand accent colours (used in the 4-colour gradient bar) */
+  --sky: #1b9ad6;
+  --accent: #c8174d;
+  --orange: #f58220;
+  --yellow: #fdb913;
+  --upes-gradient: linear-gradient(90deg, var(--sky) 0 25%, var(--accent) 25% 50%, var(--orange) 50% 75%, var(--yellow) 75% 100%);
+  color-scheme: light;
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: #1A1A1A;
+  /* Font kept as the project's current typeface (IBM Plex), not the request-app's Arial */
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 13px;
+}
+* { box-sizing: border-box; }
+a { color: var(--primary); }
+a:hover { color: var(--primary-dark); }
+
+/* Blue focus treatment from the request-app */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(11, 102, 178, .16);
+}
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* The UPES 4-colour gradient accent bar — reusable */
+.upes-accent-bar { height: 5px; width: 100%; background: var(--upes-gradient); flex-shrink: 0; }
+
+/* ---------- Keyboard accessibility ---------- */
+/* Skip-to-content link: hidden until focused via Tab. */
+.skip-link {
+  position: absolute; left: 8px; top: -48px; z-index: 1000;
+  background: var(--primary); color: #fff; padding: 8px 14px;
+  border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none;
+  transition: top .15s ease;
+}
+.skip-link:focus { top: 8px; color: #fff; }
+/* Programmatic focus target (e.g. after skip link) shouldn't draw an outline box. */
+#main-content:focus { outline: none; }
+/* Keycap styling used in the shortcuts help overlay. */
+.kbd {
+  display: inline-block; min-width: 20px; padding: 1px 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 18px;
+  text-align: center; color: var(--text); background: #f4f8fc;
+  border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 5px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }

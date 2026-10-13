@@ -26,6 +26,14 @@ Format: decision → rationale → date locked.
 | D15 | 35 canonical clusters seeded from Departmental Expenditure file | Most authoritative source found in existing records | 2026-09-29 |
 | D16 | ~60 canonical items with alias table | 258 spelling variants in historical records collapsed; aliases stored in DB | 2026-09-29 |
 | D17 | Free-text department entry NOT allowed | Dropdown enforced to prevent the 118-variant problem seen in historical data | 2026-09-29 |
+| D18 | Item visibility is per-cluster, configured by receptionist | Not all items are relevant to all clusters; receptionist controls which items each cluster can see and request | 2026-09-29 |
+| D19 | Caps can be overridden per-cluster (ClusterItem table) | Some clusters may have higher/lower allowances than the global default for the same item | 2026-09-29 |
+| D20 | Exactly two receptionist accounts: Invinder Kaur (admin) and GUEST | Named accounts; no self-registration; passwords via env var at seed time | 2026-09-29 |
+| D21 | Admin role (Invinder Kaur) can audit Guest account activity | She needs visibility into what the guest account approved and issued | 2026-09-29 |
+| D22 | All pages are responsive; teacher QR form is mobile-first | Teachers use their phones to scan and submit; receptionist may approve from a tablet | 2026-09-29 |
+| D23 | Pending requests are auto-deleted after a configurable TTL (default 48h) | Prevents stale uncollected requests from polluting the queue | 2026-09-29 |
+| D24 | TTL is configurable by admin only (Invinder Kaur); Guest cannot change it | Single source of truth for system behaviour; guest should not alter retention policy | 2026-09-29 |
+| D25 | Fulfilled and rejected requests are never auto-deleted | Required for historical reporting and audit | 2026-09-29 |
 
 ---
 

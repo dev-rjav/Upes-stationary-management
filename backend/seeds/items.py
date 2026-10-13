@@ -1,2 +1,70 @@
-﻿# placeholder: Seed canonical item list (~60 items) + known aliases
-# Source: CLAUDE.md Canonical Item List section
+ITEMS_DATA = [
+    # Writing Instruments
+    {'name': 'Pen (Ball Point)', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 50, 'initial_stock': 200},
+    {'name': 'Pen — Trimax / Reynolds', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 30, 'initial_stock': 100},
+    {'name': 'Pen — Pilot / Flair / Captain', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 3, 'monthly_cap': 6, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'Pen — Gel (Uniball / Racer)', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 3, 'monthly_cap': 6, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'Parker Pen', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Pencil', 'unit': 'EA', 'hsn': '9609', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 30, 'initial_stock': 100},
+    {'name': 'Sketch Pen / Color Pen', 'unit': 'PAC', 'hsn': '9608', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Highlighter', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 20, 'initial_stock': 50},
+    {'name': 'OHP Marker', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Whiteboard Marker', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 3, 'monthly_cap': 6, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'Permanent Marker', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 40},
+    {'name': 'Marker Ink (Refill)', 'unit': 'EA', 'hsn': '9608', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 30},
+    # Paper & Pads
+    {'name': 'A4 Paper Ream (70/75 GSM)', 'unit': 'REAM', 'hsn': '4802', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'A3 Paper Ream', 'unit': 'REAM', 'hsn': '4802', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Bond Paper (85 GSM)', 'unit': 'PAC', 'hsn': '4802', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 15},
+    {'name': 'Bond Paper (100 GSM)', 'unit': 'PAC', 'hsn': '4802', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Coloured Paper A4', 'unit': 'PAC', 'hsn': '4802', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 15},
+    {'name': 'Chart Paper', 'unit': 'EA', 'hsn': '4802', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'Carbon Paper', 'unit': 'PAC', 'hsn': '4809', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Glossy Paper', 'unit': 'SHT', 'hsn': '4810', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Graph Paper', 'unit': 'PAC', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 5, 'initial_stock': 15},
+    {'name': 'A4 Label Stickers', 'unit': 'PAC', 'hsn': '4821', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Notepad / Conference Pad', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 40},
+    {'name': 'Sticky Notes', 'unit': 'PAC', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 40},
+    {'name': 'Page Markers / Flags', 'unit': 'PAC', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 25},
+    # Files & Folders
+    {'name': 'Index File (Blue)', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 3, 'monthly_cap': 6, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'L-Folder', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 5, 'monthly_cap': 10, 'threshold': 20, 'initial_stock': 50},
+    {'name': 'Button File / Folder', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 3, 'monthly_cap': 6, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Cobra File', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Sheet Protector', 'unit': 'PAC', 'hsn': '3926', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 20},
+    # Adhesives & Tape
+    {'name': 'Cello Tape 1"', 'unit': 'EA', 'hsn': '3919', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Cello Tape 2"', 'unit': 'EA', 'hsn': '3919', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Brown Tape 2"', 'unit': 'EA', 'hsn': '3919', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Double-Sided Tape (12mm)', 'unit': 'EA', 'hsn': '3919', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 15},
+    {'name': 'Glue Stick', 'unit': 'EA', 'hsn': '3506', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Gum Bottle / Fevicol', 'unit': 'EA', 'hsn': '3506', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 10},
+    # Fasteners & Pins
+    {'name': 'Binder Clip 32mm', 'unit': 'DZ', 'hsn': '8305', 'per_checkout_cap': 2, 'monthly_cap': 5, 'threshold': 10, 'initial_stock': 30},
+    {'name': 'Binder Clip 51mm', 'unit': 'DZ', 'hsn': '8305', 'per_checkout_cap': 2, 'monthly_cap': 5, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Stapler Pin (No.10)', 'unit': 'EA', 'hsn': '8305', 'per_checkout_cap': 2, 'monthly_cap': 5, 'threshold': 20, 'initial_stock': 60},
+    {'name': 'Stapler Pin 24/6', 'unit': 'EA', 'hsn': '8305', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 40},
+    {'name': 'Push Pin / Drawing Pin', 'unit': 'EA', 'hsn': '7317', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Rubber Band', 'unit': 'PKT', 'hsn': '4016', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 15},
+    # Staplers, Punches & Cutters
+    {'name': 'Stapler (Small / No.10)', 'unit': 'EA', 'hsn': '8472', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Punch Machine', 'unit': 'EA', 'hsn': '8472', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 3, 'initial_stock': 5},
+    {'name': 'Paper Cutter / Blade', 'unit': 'EA', 'hsn': '8211', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Scissors (Small)', 'unit': 'EA', 'hsn': '8213', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    # Correction
+    {'name': 'Correction Pen', 'unit': 'EA', 'hsn': '3824', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 25},
+    {'name': 'Correction Fluid (Whitener)', 'unit': 'EA', 'hsn': '3824', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Eraser', 'unit': 'EA', 'hsn': '4016', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 30},
+    {'name': 'Sharpener', 'unit': 'EA', 'hsn': '8214', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    # Registers & Books
+    {'name': 'Register (Soft Cover)', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 15, 'initial_stock': 40},
+    {'name': 'Register (Hard Cover)', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Attendance Register', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 1, 'monthly_cap': 2, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Stock Register', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    # Miscellaneous
+    {'name': 'Scale (12")', 'unit': 'EA', 'hsn': '9017', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Stamp Pad', 'unit': 'EA', 'hsn': '9612', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 3, 'initial_stock': 5},
+    {'name': 'Duster (Board)', 'unit': 'EA', 'hsn': '9603', 'per_checkout_cap': 1, 'monthly_cap': 1, 'threshold': 5, 'initial_stock': 10},
+    {'name': 'Envelopes A4', 'unit': 'PKT', 'hsn': '4817', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 20},
+    {'name': 'Notepad (Spiral)', 'unit': 'EA', 'hsn': '4820', 'per_checkout_cap': 2, 'monthly_cap': 4, 'threshold': 10, 'initial_stock': 25},
+]

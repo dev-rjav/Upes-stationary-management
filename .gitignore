@@ -1,9 +1,19 @@
 # ── Agent & owner reference files ──────────────────────────────────────────
 CLAUDE.md
 PENDING_CONFIRMATIONS.md
+DESIGN_BRIEF.md
+CREDENTIALS.md
 *.xlsx
 *.xls
 *.csv
+
+# ── Raw / reference material & generated artifacts (not for the repo) ────────
+*.zip
+sheets/
+frontendzipnew_extracted/
+zip_preview/
+/image.png
+backend/tests/_results.json
 
 # ── Python / Flask ──────────────────────────────────────────────────────────
 __pycache__/
