@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import CommandPalette from '../CommandPalette';
 import SearchIcon from '../icons/SearchIcon';
-import upesMark from '../../assets/upes-mark.png';
+import upesLogo from '../../assets/upes-logo-full.png';
 
 const NAV = [
   { key: 'requests', label: 'Requests', path: '/receptionist/requests', icon: 'R', keywords: 'orders approve pending' },
@@ -82,12 +82,9 @@ export default function ReceptionistLayout() {
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {desktop && (
         <nav aria-label="Main" style={{ width: 220, flexShrink: 0, background: '#fff', borderRight: '1px solid #E5E5E5', display: 'flex', flexDirection: 'column', padding: '16px 12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 6px 18px' }}>
-            <img src={upesMark} alt="UPES" style={{ height: 30, width: 'auto', display: 'block' }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontWeight: 600, fontSize: 13, letterSpacing: '0.03em' }}>UPES</span>
-              <span style={{ fontSize: 11.5, color: '#6B6B6B' }}>Stationery Desk</span>
-            </div>
+          <div style={{ padding: '0 6px 18px' }}>
+            <img src={upesLogo} alt="UPES" style={{ height: 28, width: 'auto', display: 'block' }} />
+            <span style={{ fontSize: 11.5, color: '#6B6B6B', display: 'block', marginTop: 4 }}>Stationery Desk</span>
           </div>
           <button onClick={() => setPaletteOpen(true)} aria-keyshortcuts="Control+K Meta+K"
             style={{ display: 'flex', alignItems: 'center', gap: 8, height: 34, margin: '0 0 10px', padding: '0 10px', border: '1px solid #cde0f0', borderRadius: 7, background: '#fff', color: '#6B6B6B', font: 'inherit', fontSize: 13, cursor: 'pointer', textAlign: 'left' }}>
